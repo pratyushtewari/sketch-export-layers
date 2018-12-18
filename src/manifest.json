@@ -1,0 +1,30 @@
+{
+  "compatibleVersion": 3,
+  "bundleVersion": 1,
+  "icon": "icon.png",
+  "name": "PTEWARI Export to HTML",
+  "description": "This will export layers to a html file",
+  "author": "Pratyush Tewari",
+  "authorEmail" : "design.systems@jpmchase.com",
+  "homepage": "https://ptewari.com/",
+  "version": "1.0",
+  "identifier": "com.ptewari.ptewari-export-group",
+  "commands" : [
+    {
+      "script" : "my-command.js",
+      "name" : "PTEWARI Export to HTML",
+      "shortcut": "ctrl shift h",
+      "handlers" : {
+        "run" : "onRun"
+      },
+      "identifier" : "ptewari-export-to-html"
+    }
+  ],
+  "menu" : {
+    "items" : [
+      "ptewari-export-to-html"
+    ],
+    "isRoot": true,
+    "title" : "PTEWARI Export to HTML"
+  }
+}
