@@ -156,7 +156,7 @@ function onRun(context) {
     "outline": 0,
     "box-shadow": "0 0 0 1px #BD10E0"
   };
-  spec['[data-name="PTEWARIDescription"] > img '] = {
+  spec['[data-name="MDSdescription"] > img '] = {
     "display": "none",
     "top": "0 !important"
   };
@@ -217,18 +217,6 @@ function onRun(context) {
         trimming: false
       };
       sketch__WEBPACK_IMPORTED_MODULE_0___default.a.export(layer, options);
-    } // Add to the spec global object
-
-
-    var key = "#PTEWARI" + layer.id.replace(/-/g, "");
-    spec[key] = {
-      left: layer.frame.x + "px",
-      top: layer.frame.y + "px",
-      position: "absolute"
-    };
-
-    if (layer.type == "Group") {// spec[key].height =  layer.frame.height + "px";
-      // spec[key].width =  layer.frame.width + "px";
     }
   }
 
@@ -236,13 +224,7 @@ function onRun(context) {
   selection.forEach(function (layer, i) {
     var path = "~/Desktop/" + layer.name;
     currentSelectionLayer = layer;
-    exportIndividualLayer(layer); // spec is global set from exportandSpec function
-    // Remove the top and left for the selected group so that the whole group is not positioned up top
-
-    spec["#PTEWARI" + layer.id.replace(/-/g, "")] = {
-      left: "0px",
-      right: "0px"
-    };
+    exportIndividualLayer(layer);
     saveJSONObjToFile(spec, path + "/style.json");
     var jsonData = NSJSONSerialization.dataWithJSONObject_options_error_(layer.sketchObject.treeAsDictionary(), 0, nil);
     var jsonString = NSString.alloc().initWithData_encoding_(jsonData, NSUTF8StringEncoding);
@@ -252,7 +234,7 @@ function onRun(context) {
     saveJSONStringToFile(objcStr, path + "/index.html");
     var css = NSString.stringWithFormat("%@", Css.of(spec));
     saveJSONStringToFile(css, path + "/data.css");
-    var myjs = "\n\n\n    function layer2Html(layer) {\n      var html;\n      if (layer[\"<class>\"] == \"MSLayerGroup\" && !(layer.name.toLowerCase().startsWith(\"ico-\") || layer.name.toLowerCase().startsWith(\"image-\") || layer.name.toLowerCase().startsWith(\"@\"))) {\n        html = document.createElement(\"div\");\n      } else {\n        html = document.createElement(\"img\");\n        html.setAttribute(\"src\", layer.objectID + \".png\");\n      }\n      html.setAttribute(\"id\", \"PTEWARI\" + layer.objectID.replace(/-/gi, \"\"));\n      html.setAttribute(\"data-name\", \"PTEWARI\" + layer.name);\n      if (layer.name.toLowerCase().startsWith(\"ico-\") || layer.name.toLowerCase().startsWith(\"image-\") || layer.name.toLowerCase().startsWith(\"@\")) {\n        return html;\n      }\n      if (layer.layers && layer.layers.length) {\n        layer.layers.forEach(layer => {\n          if (html.nodeName != \"IMG\") {\n            html.appendChild(layer2Html(layer))\n          }\n        });\n      }\n      return html;\n    }\n    $(document).ready(function () {\n      $.getJSON(\"./data.json\")\n      .done(function (data) {\n        var html = layer2Html(data);\n        document.getElementById(\"main\").appendChild(html);\n        $(\"img\").click(function (e) {    \n          $(\"img\").removeClass(\"selected\")\n          let name = $(this).addClass(\"selected\").attr(\"data-name\");\n          $('[data-name=\"PTEWARIDescription\"] > img').hide();\n          let image = '[data-name=\"PTEWARIDescription\"] > img[data-name=\"' + name + '\"]';\n          $(image).show();\n        });\n      });\n    });\n    ";
+    var myjs = "\n    function layer2Html(layer) {\n      var html;\n      if (layer[\"<class>\"] == \"MSLayerGroup\" && !(layer.name.toLowerCase().startsWith(\"ico-\") || layer.name.toLowerCase().startsWith(\"image-\") || layer.name.toLowerCase().startsWith(\"@\"))) {\n        html = document.createElement(\"div\");\n      } else {\n        html = document.createElement(\"img\");\n        html.setAttribute(\"src\", layer.objectID + \".png\");\n      }\n      html.setAttribute(\"id\", \"MDS\" + layer.objectID.replace(/-/gi, \"\"));\n      html.setAttribute(\"data-name\", \"MDS\" + layer.name);   \n      html.setAttribute(\"style\",\"left: \" + layer.frame.x + \"px; top: \" + layer.frame.y + \"px; position: absolute;\" )      \n      if (layer.name.toLowerCase().startsWith(\"ico-\") || layer.name.toLowerCase().startsWith(\"image-\") || layer.name.toLowerCase().startsWith(\"@\")) {\n        return html;\n      }\n      if (layer.layers && layer.layers.length) {\n        layer.layers.forEach(layer => {\n          if (html.nodeName != \"IMG\") {\n            html.appendChild(layer2Html(layer))\n          }\n        });\n      }\n      return html;\n    }\n    $(document).ready(function () {\n      $.getJSON(\"./data.json\")\n      .done(function (data) {\n        var html = layer2Html(data);\n        html.style.top = \"0px\";\n        html.style.left = \"0px\";\n        document.getElementById(\"main\").appendChild(html);\n        $(\"img\").click(function (e) {    \n          $(\"img\").removeClass(\"selected\")\n          let name = $(this).addClass(\"selected\").attr(\"data-name\");\n          $('[data-name=\"MDSdescription\"] > img').hide();\n          let image = '[data-name=\"MDSdescription\"] > img[data-name=\"' + name + '\"]';\n          $(image).show();\n        });\n      });\n    });\n    ";
     var myjsjs = NSString.stringWithFormat("%@", myjs);
     saveJSONStringToFile(myjsjs, path + "/myjs.js");
   });

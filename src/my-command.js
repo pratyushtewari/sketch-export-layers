@@ -12,7 +12,7 @@ export default function onRun(context) {
       "outline": 0,
       "box-shadow": "0 0 0 1px #BD10E0"
   } 
-  spec['[data-name="PTEWARIDescription"] > img '] = {"display": "none", "top": "0 !important"}
+  spec['[data-name="MDSdescription"] > img '] = {"display": "none", "top": "0 !important"}
   spec['img.selected']={"box-shadow": "0 0 0 1px #00ff2d"}
 
   // function saveToClipboard(string) {
@@ -22,7 +22,7 @@ export default function onRun(context) {
   // }
 
   function saveJSONObjToFile(jsonObj, pathString) {
-    var file = NSString.stringWithString(JSON.stringify(jsonObj, null, "\t"));
+    var file = NSString.stringWithString(JSON.stringify(jsonObj, null, "\t"));  
     var path = NSString.alloc().initWithString_(pathString).stringByExpandingTildeInPath();
     var url = NSURL.fileURLWithPath_(path);
     file.writeToFile_atomically_encoding_error(url.path(),
@@ -77,20 +77,6 @@ export default function onRun(context) {
       }
       sketch.export(layer, options)
     }
-
-    // Add to the spec global object
-    var key = "#PTEWARI" + layer.id.replace(/-/g, "");
-
-    spec[key] = {
-      left: layer.frame.x + "px",
-      top: layer.frame.y + "px",
-      position: "absolute",
-    }
-
-    if(layer.type == "Group") {
-      // spec[key].height =  layer.frame.height + "px";
-      // spec[key].width =  layer.frame.width + "px";
-    }
   }
   
   var currentSelectionLayer
@@ -98,13 +84,6 @@ export default function onRun(context) {
     var path = "~/Desktop/" + layer.name
     currentSelectionLayer = layer
     exportIndividualLayer(layer)
-
-    // spec is global set from exportandSpec function
-    // Remove the top and left for the selected group so that the whole group is not positioned up top
-    spec["#PTEWARI" + layer.id.replace(/-/g, "")] = {
-      left: "0px",
-      right: "0px"
-    }
     saveJSONObjToFile(spec, path + "/style.json")
 
     var jsonData = NSJSONSerialization.dataWithJSONObject_options_error_(layer.sketchObject.treeAsDictionary(), 0, nil);
@@ -131,8 +110,6 @@ export default function onRun(context) {
     saveJSONStringToFile(css, path + "/data.css")
 
     var myjs = `
-
-
     function layer2Html(layer) {
       var html;
       if (layer["<class>"] == "MSLayerGroup" && !(layer.name.toLowerCase().startsWith("ico-") || layer.name.toLowerCase().startsWith("image-") || layer.name.toLowerCase().startsWith("@"))) {
@@ -141,8 +118,9 @@ export default function onRun(context) {
         html = document.createElement("img");
         html.setAttribute("src", layer.objectID + ".png");
       }
-      html.setAttribute("id", "PTEWARI" + layer.objectID.replace(/-/gi, ""));
-      html.setAttribute("data-name", "PTEWARI" + layer.name);
+      html.setAttribute("id", "MDS" + layer.objectID.replace(/-/gi, ""));
+      html.setAttribute("data-name", "MDS" + layer.name);   
+      html.setAttribute("style","left: " + layer.frame.x + "px; top: " + layer.frame.y + "px; position: absolute;" )      
       if (layer.name.toLowerCase().startsWith("ico-") || layer.name.toLowerCase().startsWith("image-") || layer.name.toLowerCase().startsWith("@")) {
         return html;
       }
@@ -159,12 +137,14 @@ export default function onRun(context) {
       $.getJSON("./data.json")
       .done(function (data) {
         var html = layer2Html(data);
+        html.style.top = "0px";
+        html.style.left = "0px";
         document.getElementById("main").appendChild(html);
         $("img").click(function (e) {    
           $("img").removeClass("selected")
           let name = $(this).addClass("selected").attr("data-name");
-          $('[data-name="PTEWARIDescription"] > img').hide();
-          let image = '[data-name="PTEWARIDescription"] > img[data-name="' + name + '"]';
+          $('[data-name="MDSdescription"] > img').hide();
+          let image = '[data-name="MDSdescription"] > img[data-name="' + name + '"]';
           $(image).show();
         });
       });
