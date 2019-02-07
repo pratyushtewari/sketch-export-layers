@@ -88,13 +88,14 @@ export default function onRun(context) {
 
     var jsonData = NSJSONSerialization.dataWithJSONObject_options_error_(layer.sketchObject.treeAsDictionary(), 0, nil);
     var jsonString = NSString.alloc().initWithData_encoding_(jsonData, NSUTF8StringEncoding);
-    saveJSONStringToFile(jsonString, path + "/data.json")
+    saveJSONStringToFile("data = " + jsonString, path + "/data.json")
 
     var indexhtml = `<!DOCTYPE html>
       <html>
         <head>
           <meta charset="utf-8"/>
           <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+          <script src="data.js"></script>
           <script src="myjs.js"></script>
           <link rel="stylesheet" href="data.css">
         </head>
@@ -134,8 +135,7 @@ export default function onRun(context) {
       return html;
     }
     $(document).ready(function () {
-      $.getJSON("./data.json")
-      .done(function (data) {
+      
         var html = layer2Html(data);
         html.style.top = "0px";
         html.style.left = "0px";
@@ -147,7 +147,7 @@ export default function onRun(context) {
           let image = '[data-name="MDSdescription"] > img[data-name="' + name + '"]';
           $(image).show();
         });
-      });
+      
     });
     `
     var myjsjs = NSString.stringWithFormat("%@", myjs);
