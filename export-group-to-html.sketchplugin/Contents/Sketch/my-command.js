@@ -1,6 +1,8 @@
-var that = this;
+var globalThis = this;
+var global = this;
 function __skpm_run (key, context) {
-  that.context = context;
+  globalThis.context = context;
+  try {
 
 var exports =
 /******/ (function(modules) { // webpackBootstrap
@@ -161,13 +163,12 @@ function onRun(context) {
     "top": "0 !important"
   };
   spec['img.selected'] = {
-    "box-shadow": "0 0 0 1px #00ff2d" // function saveToClipboard(string) {
-    //   var pasteBoard = NSPasteboard.generalPasteboard()
-    //   pasteBoard.clearContents()
-    //   pasteBoard.setString_forType(string, NSStringPboardType)
-    // }
-
-  };
+    "box-shadow": "0 0 0 1px #00ff2d"
+  }; // function saveToClipboard(string) {
+  //   var pasteBoard = NSPasteboard.generalPasteboard()
+  //   pasteBoard.clearContents()
+  //   pasteBoard.setString_forType(string, NSStringPboardType)
+  // }
 
   function saveJSONObjToFile(jsonObj, pathString) {
     var file = NSString.stringWithString(JSON.stringify(jsonObj, null, "\t"));
@@ -255,12 +256,21 @@ module.exports = require("sketch");
 /***/ })
 
 /******/ });
-  if (key === 'default' && typeof exports === 'function') {
-    exports(context);
-  } else {
-    exports[key](context);
+    if (key === 'default' && typeof exports === 'function') {
+      exports(context);
+    } else if (typeof exports[key] !== 'function') {
+      throw new Error('Missing export named "' + key + '". Your command should contain something like `export function " + key +"() {}`.');
+    } else {
+      exports[key](context);
+    }
+  } catch (err) {
+    if (typeof process !== 'undefined' && process.listenerCount && process.listenerCount('uncaughtException')) {
+      process.emit("uncaughtException", err, "uncaughtException");
+    } else {
+      throw err
+    }
   }
 }
-that['onRun'] = __skpm_run.bind(this, 'default')
+globalThis['onRun'] = __skpm_run.bind(this, 'default')
 
 //# sourceMappingURL=my-command.js.map
